@@ -1,34 +1,66 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react"
+import "./App.css"
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [name, setName] = useState("")
+  const [mail, setMail] = useState("")
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const data = {
+      name: name,
+      mail: mail,
+    }
+
+    try {
+      const response = await fetch("http://localhost:3000/submit", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        console.log("Response from backend:", result)
+      } else {
+        console.log("Failed to send data:", response.statusText)
+      }
+    } catch (error) {
+      console.error("Error:", error)
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <p>Test Form</p>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>
+            Name:
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            ></input>
+          </label>
+        </div>
+
+        <div>
+          <label>
+            Email:
+            <input
+              type="text"
+              value={mail}
+              onChange={(e) => setMail(e.target.value)}
+            ></input>
+          </label>
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
   )
 }
 
