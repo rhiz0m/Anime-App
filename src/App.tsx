@@ -1,63 +1,79 @@
-import { useState } from "react"
+import React, { useState } from "react"
+import { submitData } from "./services/api/apiService"
 import "./App.css"
 
 function App() {
-  const [name, setName] = useState("")
-  const [mail, setMail] = useState("")
+  const [title, setTitle] = useState("")
+  const [date, setDate] = useState("")
+  const [comment, setComment] = useState("")
+  const [author, setAuthor] = useState("")
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault()
 
-    const data = {
-      name: name,
-      mail: mail,
-    }
+  const data = {
+    title,
+    date,
+    comment,
+    author
+  }   
 
-    try {
-      const response = await fetch("http://localhost:3000/submit", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (response.ok) {
-        const result = await response.json()
-        console.log("Response from backend:", result)
-      } else {
-        console.log("Failed to send data:", response.statusText)
-      }
-    } catch (error) {
-      console.error("Error:", error)
-    }
+  try {
+await submitData(data)
+  } catch(error) {
+console.log(error)
   }
+ }
 
   return (
     <div>
-      <p>Test Form</p>
+      <p>Feedback Form</p>
       <form onSubmit={handleSubmit}>
         <div>
           <label>
-            Name:
+            Title:
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             ></input>
           </label>
         </div>
 
         <div>
           <label>
-            Email:
+            Date:
             <input
               type="text"
-              value={mail}
-              onChange={(e) => setMail(e.target.value)}
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
             ></input>
           </label>
         </div>
+
+        <div>
+          <label>
+            Comment:
+            <textarea
+              rows={4}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            ></textarea>
+          </label>
+        </div>
+
+        <div>
+          <label>
+          Author:
+          <input
+          type="text"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+          >
+          </input>
+          </label>
+        </div>
+
         <button type="submit">Submit</button>
       </form>
     </div>
